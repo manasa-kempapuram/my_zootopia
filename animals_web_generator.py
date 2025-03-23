@@ -1,25 +1,41 @@
 import json
 
 def load_data(file_path):
-    """ Loads a JSON file """
+    """Loads a JSON file."""
     with open(file_path, "r") as handle:
         return json.load(handle)
 
-def print_animal_info(animals_data):
+def generate_animal_info(animals_data):
+    """Generates HTML content for the animals list."""
+    output = ""
     for animal in animals_data:
+        output += '<li class="cards__item">'
         if "name" in animal:
-            print(f"Name: {animal['name']}")
+            output += f"Name: {animal['name']}<br/>\n"
         if "diet" in animal:
-            print(f"Diet: {animal['diet']}")
+            output += f"Diet: {animal['diet']}<br/>\n"
         if "locations" in animal and animal["locations"]:
-            print(f"Location: {animal['locations'][0]}")
+            output += f"Location: {animal['locations'][0]}<br/>\n"
         if "type" in animal:
-            print(f"Type: {animal['type']}")
-        print()  # Print a newline for readability
+            output += f"Type: {animal['type']}<br/>\n"
+        output += "</li>\n"
+    return output
+
+def create_html(animals_data):
+    """Reads template HTML, replaces placeholder, and writes to a new file."""
+    with open("animals_template.html", "r") as template_file:
+        template_content = template_file.read()
+
+    animals_info = generate_animal_info(animals_data)
+    new_html_content = template_content.replace("__REPLACE_ANIMALS_INFO__", animals_info)
+
+    with open("animals.html", "w") as output_file:
+        output_file.write(new_html_content)
 
 def main():
+    """Main function to load data and generate the HTML file."""
     animals_data = load_data('animals_data.json')
-    print_animal_info(animals_data)
+    create_html(animals_data)
 
 if __name__ == "__main__":
     main()
